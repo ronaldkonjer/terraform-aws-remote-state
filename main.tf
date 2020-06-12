@@ -20,7 +20,7 @@ resource "aws_s3_bucket" "state" {
 
 resource "aws_s3_bucket_policy" "b" {
   count  = var.create_s3_bucket == "true" ? 1 : 0
-  bucket = aws_s3_bucket.state[0].bucket
+  bucket = element(aws_s3_bucket.state.*.bucket, count.index)
 
   policy = <<EOF
 {
@@ -32,7 +32,7 @@ resource "aws_s3_bucket_policy" "b" {
       "Effect": "Deny",
       "Principal": "*",
       "Action": "s3:PutObject",
-      "Resource": "${aws_s3_bucket.state[0].arn}/*",
+      "Resource": "${element(aws_s3_bucket.state.*.arn, count.index)}/*",
       "Condition": {
         "StringNotEquals": {
           "s3:x-amz-server-side-encryption": "AES256"
@@ -44,7 +44,7 @@ resource "aws_s3_bucket_policy" "b" {
       "Effect": "Deny",
       "Principal": "*",
       "Action": "s3:PutObject",
-      "Resource": "${aws_s3_bucket.state[0].arn}/*",
+      "Resource": "${element(aws_s3_bucket.state.*.arn, count.index)}/*",
       "Condition": {
         "Null": {
           "s3:x-amz-server-side-encryption": "true"
@@ -94,7 +94,7 @@ EOF
       ",",
       formatlist("\"arn:aws:iam::%s:root\"", var.shared_aws_account_ids),
     )
-    bucket_arn = aws_s3_bucket.state[0].arn
+    bucket_arn = element(aws_s3_bucket.state.*.arn, count.index)
   }
 }
 
