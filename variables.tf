@@ -1,9 +1,3 @@
-variable "region" {
-}
-
-variable "profile" {
-}
-
 variable "project" {
   description = "Project name"
 }

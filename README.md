@@ -1,4 +1,4 @@
-#backend.tf => comment out
+#backend.tf => comment
 terraform {
   backend "s3" {}
 }
