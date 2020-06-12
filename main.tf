@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 resource "aws_s3_bucket" "state" {
   count         = var.create_s3_bucket == "true" ? 1 : 0
-  bucket        = "terraform-state-${module.label.name}${data.template_file.environment_suffix.rendered}"
+  bucket        = "terraform-state-${module.label.id}"
   acl           = "private"
   force_destroy = "true"
 
@@ -100,7 +100,7 @@ EOF
 
 resource "aws_dynamodb_table" "terraform-state-locktable" {
   count          = var.create_dynamodb_lock_table == "true" ? 1 : 0
-  name           = "terraform-state-lock-${module.label.name}${data.template_file.environment_suffix.rendered}"
+  name           = "terraform-state-lock-${module.label.id}"
   read_capacity  = 1
   write_capacity = 1
   hash_key       = "LockID"
@@ -118,11 +118,4 @@ resource "aws_dynamodb_table" "terraform-state-locktable" {
   )
 }
 
-data "template_file" "environment_suffix" {
-  template = "$${suffix}"
-
-  vars = {
-    suffix = length(var.environment) > 0 ? format("-%s", var.environment) : ""
-  }
-}
 
