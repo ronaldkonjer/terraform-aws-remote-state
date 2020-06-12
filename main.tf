@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 resource "aws_s3_bucket" "state" {
   count         = var.create_s3_bucket == "true" ? 1 : 0
-  bucket        = "terraform-state-${var.project}${data.template_file.environment_suffix.rendered}"
+  bucket        = "terraform-state-${module.label.name}${data.template_file.environment_suffix.rendered}"
   acl           = "private"
   force_destroy = "true"
 
