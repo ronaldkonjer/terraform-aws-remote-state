@@ -100,7 +100,7 @@ EOF
 
 resource "aws_dynamodb_table" "terraform-state-locktable" {
   count          = var.create_dynamodb_lock_table == "true" ? 1 : 0
-  name           = "terraform-state-lock-${var.project}${data.template_file.environment_suffix.rendered}"
+  name           = "terraform-state-lock-${module.label.name}${data.template_file.environment_suffix.rendered}"
   read_capacity  = 1
   write_capacity = 1
   hash_key       = "LockID"
