@@ -1,6 +1,6 @@
 #backend.tf => comment
 terraform {
-  backend "s3" {}
+ backend "s3" {}
 }
 
 #If not done yet, create a workspace
@@ -30,15 +30,16 @@ remote-state:
 
 #backend.tf => uncomment
 terraform {
-  backend "s3" {}
+  backend "s3" {}
 }
 
 #Initialize the remote state in S3
-make init-remote-stage
+make init-remote-state ENV=stage REGION=eu-west-1 NAME=project
 ```
-init-remote-stage:
-	@echo "initialize terraform with remote state in S3 for stage environment"
-	@terraform init  -backend-config="encrypt=true" -backend-config="bucket=terraform-state-ront-cluster-stage" -backend-config="dynamodb_table=terraform-state-lock-front-cluster-stage" -backend-config="region=eu-west-1" -backend-config="key=terraform.tfstate.d/stage/terraform.tfstate"
+#Can't use variables on backend.tf. So we define a parameterized command
+init-remote-state:
+	@echo "initialize terrafrom with remote state in S3 for ${NAME}-$(ENV) environment in ${REGION}"
+	@terraform init  -backend-config="encrypt=true" -backend-config="bucket=terraform-state-${NAME}-$(ENV)" -backend-config="dynamodb_table=terraform-state-lock-${NAME}-$(ENV)" -backend-config="region=${REGION}" -backend-config="key=terraform.tfstate.d/${ENV}/terraform.tfstate"
 ```
 
 make refresh ENV=stage
