@@ -1,7 +1,7 @@
 data "aws_region" "current" {}
 
 resource "aws_s3_bucket" "state" {
-  count         = var.create_s3_bucket
+  count         = var.create_s3_bucket ? 1 : 0
   bucket        = "terraform-state-${module.label.id}"
   acl           = "private"
   force_destroy = "true"
@@ -19,7 +19,7 @@ resource "aws_s3_bucket" "state" {
 }
 
 resource "aws_s3_bucket_policy" "b" {
-  count  = var.create_s3_bucket
+  count  = var.create_s3_bucket ? 1 : 0
   bucket = aws_s3_bucket.state[0].bucket
 
   policy = <<EOF
