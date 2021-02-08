@@ -1,7 +1,7 @@
 data "aws_region" "current" {}
 
 resource "aws_s3_bucket" "state" {
-  count         = var.create_s3_bucket == "true" ? 1 : 0
+  count         = var.create_s3_bucket
   bucket        = "terraform-state-${module.label.id}"
   acl           = "private"
   force_destroy = "true"
@@ -19,7 +19,7 @@ resource "aws_s3_bucket" "state" {
 }
 
 resource "aws_s3_bucket_policy" "b" {
-  count  = var.create_s3_bucket == "true" ? 1 : 0
+  count  = var.create_s3_bucket
   bucket = aws_s3_bucket.state[0].bucket
 
   policy = <<EOF
@@ -66,7 +66,7 @@ EOF
 }
 
 data "template_file" "cross_account_bucket_sharing_policy" {
-  count = length(var.shared_aws_account_ids) > 0 && var.create_s3_bucket == "true" ? 1 : 0
+  count = length(var.shared_aws_account_ids) > 0 && var.create_s3_bucket ? 1 : 0
 
   template = <<EOF
 ,{
@@ -99,7 +99,7 @@ EOF
 }
 
 resource "aws_dynamodb_table" "terraform-state-locktable" {
-  count          = var.create_dynamodb_lock_table == "true" ? 1 : 0
+  count          = var.create_dynamodb_lock_table ? 1 : 0
   name           = "terraform-state-lock-${module.label.id}"
   read_capacity  = 1
   write_capacity = 1
