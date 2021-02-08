@@ -3,13 +3,15 @@ variable "environment" {
 }
 
 variable "create_dynamodb_lock_table" {
+  type        = bool
   description = "Create a DynamoDB table for state locking. Set to false or 0 to disable. Defaults to true"
-  default     = "true"
+  default     = true
 }
 
 variable "create_s3_bucket" {
+  type        = bool
   description = "Create the S3 bucket and policy. Set to false of 0 to disable. Defaults to true"
-  default     = "true"
+  default     = true
 }
 
 variable "shared_aws_account_ids" {
